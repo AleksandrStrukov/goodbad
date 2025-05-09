@@ -1,0 +1,83 @@
+#include "log_duration.h"
+#include <algorithm>
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// Наивная реализация: вставка в начало
+vector<int> ReverseVector(const vector<int>& source_vector) {
+    vector<int> res;
+    for (int i : source_vector) {
+        res.insert(res.begin(), i);
+    }
+    return res;
+}
+
+// Хорошая реализация: вставка в конец с обратными итераторами
+vector<int> ReverseVector2(const vector<int>& source_vector) {
+    vector<int> res;
+    for (auto it = source_vector.rbegin(); it != source_vector.rend(); ++it) {
+        res.push_back(*it);
+    }
+    return res;
+}
+
+// Отличная реализация: инициализация обратными итераторами
+vector<int> ReverseVector3(const vector<int>& source_vector) {
+    return {source_vector.rbegin(), source_vector.rend()};
+}
+
+// Ваша реализация: предварительное выделение памяти и заполнение с конца
+vector<int> ReverseVector4(const vector<int>& source_vector) {
+    vector<int> res(source_vector.size());
+    for (size_t i = 0; i < source_vector.size(); ++i) {
+        res[source_vector.size() - 1 - i] = source_vector[i];
+    }
+    return res;
+}
+
+void Operate() {
+    int n;
+    cin >> n;
+
+    // Создаем вектор случайных чисел
+    vector<int> rand_vector;
+    rand_vector.reserve(n);
+    for (int i = 0; i < n; ++i) {
+        rand_vector.push_back(rand());
+    }
+
+    // Сравнение в зависимости от размера вектора
+    if (n <= 100'000) {
+        // Сравниваем Naive и Good
+        {
+            LOG_DURATION("Naive");
+            auto result = ReverseVector(rand_vector);
+        }
+        {
+            LOG_DURATION("Good");
+            auto result = ReverseVector2(rand_vector);
+        }
+    } else {
+        // Сравниваем Good, Best и Your
+        {
+            LOG_DURATION("Good");
+            auto result = ReverseVector2(rand_vector);
+        }
+        {
+            LOG_DURATION("Best");
+            auto result = ReverseVector3(rand_vector);
+        }
+        {
+            LOG_DURATION("Your");
+            auto result = ReverseVector4(rand_vector);
+        }
+    }
+}
+
+int main() {
+    Operate();
+    return 0;
+}
